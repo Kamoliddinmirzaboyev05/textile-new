@@ -25,10 +25,6 @@
             margin-bottom: 20px;
         }
 
-        h1 {
-            font-size: 2em;
-        }
-
         /* Form and Input Styles */
         form {
             max-width: 600px;
@@ -46,11 +42,6 @@
             border: 2px solid #ddd;
             border-radius: 5px;
             font-size: 1rem;
-        }
-
-        input:focus {
-            border-color: #4CAF50;
-            outline: none;
         }
 
         button {
@@ -94,31 +85,6 @@
             background-color: #f1f1f1;
         }
 
-        .action-buttons {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .edit-button, .delete-button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .delete-button {
-            background-color: #f44336;
-        }
-
-        .edit-button:hover {
-            background-color: #45a049;
-        }
-
-        .delete-button:hover {
-            background-color: #d32f2f;
-        }
-
         /* Responsive Design */
         @media (max-width: 768px) {
             form {
@@ -126,24 +92,6 @@
             }
 
             table {
-                font-size: 0.9rem;
-            }
-
-            .search-container input[type="search"] {
-                width: 80%;
-            }
-        }
-
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 1.5em;
-            }
-
-            button {
-                padding: 12px;
-            }
-
-            input {
                 font-size: 0.9rem;
             }
         }
@@ -163,9 +111,6 @@
     </form>
 
     <h2>Saqlangan Ma'lumotlar:</h2>
-    <div class="search-container">
-        <input type="search" id="searchInput" placeholder="Qidirish..." oninput="searchData()">
-    </div>
 
     <!-- Data Table -->
     <table id="dataTable">
@@ -186,10 +131,8 @@
     <script>
         const form = document.getElementById("dataForm");
         const dataList = document.getElementById("dataList");
-        const searchInput = document.getElementById("searchInput");
-        const dataTable = document.getElementById("dataTable");
 
-        // Ma'lumotlarni localStorage-ga qo'shish
+        // Ma'lumotlarni HTML ko'rinmas atributlari orqali saqlash
         form.addEventListener("submit", function(event) {
             event.preventDefault();
 
@@ -199,88 +142,51 @@
             const avtomobil = document.getElementById("avtomobil").value;
             const texnikPasport = document.getElementById("texnikPasport").value;
 
-            const newData = {
-                ism,
-                familiya,
-                jsr,
-                avtomobil,
-                texnikPasport
-            };
+            // Yangi ma'lumotni formadagi ko'rinmas elementlarga saqlash
+            const newData = `
+                <tr>
+                    <td>${ism}</td>
+                    <td>${familiya}</td>
+                    <td>${jsr}</td>
+                    <td>${avtomobil}</td>
+                    <td>${texnikPasport}</td>
+                    <td>
+                        <button onclick="editData(this)">Tahrirlash</button>
+                        <button onclick="deleteData(this)">O'chirish</button>
+                    </td>
+                    <!-- Ko'rinmas elementda saqlash -->
+                    <input type="hidden" value="${ism},${familiya},${jsr},${avtomobil},${texnikPasport}">
+                </tr>
+            `;
 
-            let storedData = JSON.parse(localStorage.getItem("data")) || [];
-            storedData.push(newData);
-            localStorage.setItem("data", JSON.stringify(storedData));
+            // Data ro'yxatiga qo'shish
+            dataList.insertAdjacentHTML('beforeend', newData);
 
-            displayData();
+            // Formani tozalash
             form.reset();
         });
 
-        // Ma'lumotlarni ko'rsatish
-        function displayData() {
-            dataList.innerHTML = "";
-            const storedData = JSON.parse(localStorage.getItem("data")) || [];
-
-            storedData.forEach((data, index) => {
-                const row = document.createElement("tr");
-
-                row.innerHTML = `
-                    <td>${data.ism}</td>
-                    <td>${data.familiya}</td>
-                    <td>${data.jsr}</td>
-                    <td>${data.avtomobil}</td>
-                    <td>${data.texnikPasport}</td>
-                    <td class="action-buttons">
-                        <button class="edit-button" onclick="editData(${index})">Tahrirlash</button>
-                        <button class="delete-button" onclick="deleteData(${index})">O'chirish</button>
-                    </td>
-                `;
-                dataList.appendChild(row);
-            });
-        }
-
         // Ma'lumotni tahrirlash
-        function editData(index) {
-            const storedData = JSON.parse(localStorage.getItem("data")) || [];
-            const data = storedData[index];
+        function editData(button) {
+            const row = button.closest("tr");
+            const hiddenInput = row.querySelector("input[type='hidden']").value.split(',');
 
-            document.getElementById("ism").value = data.ism;
-            document.getElementById("familiya").value = data.familiya;
-            document.getElementById("jsr").value = data.jsr;
-            document.getElementById("avtomobil").value = data.avtomobil;
-            document.getElementById("texnikPasport").value = data.texnikPasport;
+            // Formani tahrir qilish
+            document.getElementById("ism").value = hiddenInput[0];
+            document.getElementById("familiya").value = hiddenInput[1];
+            document.getElementById("jsr").value = hiddenInput[2];
+            document.getElementById("avtomobil").value = hiddenInput[3];
+            document.getElementById("texnikPasport").value = hiddenInput[4];
 
-            // Remove the edited data
-            storedData.splice(index, 1);
-            localStorage.setItem("data", JSON.stringify(storedData));
-
-            displayData();
+            // Rowni o'chirish
+            row.remove();
         }
 
         // Ma'lumotni o'chirish
-        function deleteData(index) {
-            const storedData = JSON.parse(localStorage.getItem("data")) || [];
-            storedData.splice(index, 1);
-            localStorage.setItem("data", JSON.stringify(storedData));
-
-            displayData();
+        function deleteData(button) {
+            const row = button.closest("tr");
+            row.remove();
         }
-
-        // Qidiruv funktsiyasi
-        function searchData() {
-            const searchValue = searchInput.value.toLowerCase();
-            const rows = dataList.querySelectorAll("tr");
-
-            rows.forEach(row => {
-                const cells = row.querySelectorAll("td");
-                const searchString = Array.from(cells)
-                    .map(cell => cell.textContent.toLowerCase())
-                    .join(" ");
-
-                row.style.display = searchString.includes(searchValue) ? "" : "none";
-            });
-        }
-
-        window.onload = displayData;
     </script>
 </body>
 </html>
