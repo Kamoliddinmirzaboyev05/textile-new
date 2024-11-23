@@ -4,110 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Haydovchi Ma'lumotlari</title>
-
     <!-- FontAwesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
     <style>
-        /* Global Reset */
+        /* Global Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: Arial, sans-serif;
         }
-
         body {
             background-color: #f4f4f9;
+            padding: 20px;
             color: #333;
-            padding: 20px;
         }
 
-        h1, h2 {
-            text-align: center;
-            color: #4CAF50;
-            margin-bottom: 20px;
-        }
-
-        /* Search Bar Styles */
-        #searchContainer {
+        /* Login Page Styles */
+        #loginPage {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            margin-bottom: 20px;
+            height: 100vh;
         }
-
-        #searchInput {
-            width: 80%;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            font-size: 1rem;
-        }
-
-        #addButton {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1rem;
-            cursor: pointer;
-        }
-
-        #addButton:hover {
-            background-color: #45a049;
-        }
-
-        /* Table Styles */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        table th, table td {
-            padding: 12px;
-            text-align: left;
-            border: 1px solid #ddd;
-        }
-
-        table th {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        table tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        table tr:hover {
-            background-color: #f1f1f1;
-        }
-
-        /* Modal Styles */
-        #modal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        #loginPage form {
+            background: #fff;
+            padding: 30px;
             border-radius: 10px;
-            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
         }
-
-        #modal input {
+        #loginPage h1 {
+            margin-bottom: 20px;
+            color: #4CAF50;
+        }
+        #loginPage input {
             width: 100%;
             padding: 10px;
             margin: 10px 0;
             border: 1px solid #ddd;
             border-radius: 5px;
-            font-size: 1rem;
         }
-
-        #modal button {
+        #loginPage button {
             width: 100%;
             padding: 10px;
             background-color: #4CAF50;
@@ -115,15 +54,44 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 16px;
         }
-
-        #modal button:hover {
+        #loginPage button:hover {
             background-color: #45a049;
         }
 
-        /* Modal Overlay */
-        #overlay {
+        /* Main Page Styles */
+        #mainContainer {
+            display: none;
+        }
+        #actionButtons {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        #dataTable {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        #dataTable th, #dataTable td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        #dataTable th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        #dataTable tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        #dataTable tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Modal Styles */
+        .modal {
             display: none;
             position: fixed;
             top: 0;
@@ -131,175 +99,190 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
+            justify-content: center;
+            align-items: center;
+        }
+        .modalContent {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 100%;
+        }
+        .modalContent input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
         }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            #searchInput {
-                width: 70%;
-            }
+        /* Button Styles */
+        button {
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-add {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+        }
+
+        .btn-add:hover {
+            background-color: #45a049;
+        }
+
+        .btn-edit, .btn-delete {
+            background-color: #f44336;
+            color: white;
+            border: none;
+        }
+
+        .btn-edit:hover, .btn-delete:hover {
+            background-color: #e53935;
         }
     </style>
 </head>
 <body>
-    <h1>Haydovchi Ma'lumotlari</h1>
-
-    <!-- Search Bar and Add Button -->
-    <div id="searchContainer">
-        <input type="text" id="searchInput" placeholder="Qidirish..." oninput="searchData()">
-        <button id="addButton" onclick="openModal()">Qo'shish</button>
+    <!-- Login Page -->
+    <div id="loginPage">
+        <form>
+            <h1>Login</h1>
+            <input type="text" id="loginInput" placeholder="Login" required><br><br>
+            <input type="password" id="passwordInput" placeholder="Parol" required><br><br>
+            <button type="button" onclick="login()">Kirish</button>
+        </form>
     </div>
 
-    <h2>Saqlangan Ma'lumotlar:</h2>
+    <!-- Main Page -->
+    <div id="mainContainer">
+        <h1>Haydovchi Ma'lumotlari</h1>
+        <div id="actionButtons">
+            <button class="btn-add" onclick="openModal('addModal')">Yangi Ma'lumot Qo'shish</button>
+        </div>
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>Ism</th>
+                    <th>Familiya</th>
+                    <th>JSHR</th>
+                    <th>Avtomobil</th>
+                    <th>Texpasport Raqami</th>
+                    <th>Harakatlar</th>
+                </tr>
+            </thead>
+            <tbody id="dataList"></tbody>
+        </table>
+    </div>
 
-    <!-- Data Table -->
-    <table id="dataTable">
-        <thead>
-            <tr>
-                <th>Ism</th>
-                <th>Familiya</th>
-                <th>JSHR</th>
-                <th>Avtomobil Raqami</th>
-                <th>Texnik Pasport Raqami</th>
-                <th>Harakatlar</th>
-            </tr>
-        </thead>
-        <tbody id="dataList">
-        </tbody>
-    </table>
-
-    <!-- Modal -->
-    <div id="overlay" onclick="closeModal()"></div>
-    <div id="modal">
-        <input type="text" id="ism" placeholder="Haydovchi Ismi" required>
-        <input type="text" id="familiya" placeholder="Haydovchi Familiyasi" required>
-        <input type="text" id="jsr" placeholder="Haydovchi JSHR" required>
-        <input type="text" id="avtomobil" placeholder="Avtomobil Raqami" required>
-        <input type="text" id="texnikPasport" placeholder="Avtomobil Texnik Pasporti" required>
-        <button onclick="addData()">Saqlash</button>
+    <!-- Add Data Modal -->
+    <div id="addModal" class="modal">
+        <div class="modalContent">
+            <h2>Yangi Ma'lumot Qo'shish</h2>
+            <input type="text" id="addIsm" placeholder="Ism" required>
+            <input type="text" id="addFamiliya" placeholder="Familiya" required>
+            <input type="text" id="addJshr" placeholder="JSHR" required>
+            <input type="text" id="addAvto" placeholder="Avtomobil Raqami" required>
+            <input type="text" id="addTexpasport" placeholder="Texpasport Raqami" required>
+            <button class="btn-add" onclick="addData()">Saqlash</button>
+            <button onclick="closeModal('addModal')">Bekor Qilish</button>
+        </div>
     </div>
 
     <script>
-        const dataList = document.getElementById("dataList");
-        const modal = document.getElementById("modal");
-        const overlay = document.getElementById("overlay");
-    
-        let editingIndex = null; // Tahrirlash uchun indeks saqlash
-    
-        // Modalni ochish
-        function openModal(editIndex = null) {
-            modal.style.display = "block";
-            overlay.style.display = "block";
-    
-            // Tahrirlash uchun ma'lumotni yuklash
-            if (editIndex !== null) {
-                editingIndex = editIndex;
-                const storedData = JSON.parse(localStorage.getItem("data"));
-                const item = storedData[editIndex];
-                document.getElementById("ism").value = item.ism;
-                document.getElementById("familiya").value = item.familiya;
-                document.getElementById("jsr").value = item.jsr;
-                document.getElementById("avtomobil").value = item.avtomobil;
-                document.getElementById("texnikPasport").value = item.texnikPasport;
-            }
-        }
-    
-        // Modalni yopish va inputlarni tozalash
-        function closeModal() {
-            modal.style.display = "none";
-            overlay.style.display = "none";
-    
-            // Inputlarni tozalash
-            document.getElementById("ism").value = '';
-            document.getElementById("familiya").value = '';
-            document.getElementById("jsr").value = '';
-            document.getElementById("avtomobil").value = '';
-            document.getElementById("texnikPasport").value = '';
-            editingIndex = null;
-        }
-    
-        // Yangi ma'lumot qo'shish yoki mavjudini yangilash
-        function addData() {
-            const ism = document.getElementById("ism").value;
-            const familiya = document.getElementById("familiya").value;
-            const jsr = document.getElementById("jsr").value;
-            const avtomobil = document.getElementById("avtomobil").value;
-            const texnikPasport = document.getElementById("texnikPasport").value;
-    
-            const newData = { ism, familiya, jsr, avtomobil, texnikPasport };
-            let storedData = JSON.parse(localStorage.getItem("data")) || [];
-    
-            if (editingIndex !== null) {
-                // Ma'lumotni yangilash
-                storedData[editingIndex] = newData;
+        let currentLogin = "admin";
+        let currentPassword = "1234";
+        let haydovchilar = JSON.parse(localStorage.getItem('haydovchilar')) || [];
+
+        // Login function
+        function login() {
+            const enteredLogin = document.getElementById("loginInput").value;
+            const enteredPassword = document.getElementById("passwordInput").value;
+            if (enteredLogin === currentLogin && enteredPassword === currentPassword) {
+                document.getElementById("loginPage").style.display = "none";
+                document.getElementById("mainContainer").style.display = "block";
+                renderTable();
             } else {
-                // Yangi ma'lumot qo'shish
-                storedData.push(newData);
+                alert("Login yoki parol noto'g'ri.");
             }
-    
-            localStorage.setItem("data", JSON.stringify(storedData));
-            closeModal();
-            displayData();
         }
-    
-        // Ma'lumotlarni ekranga chiqarish
-        function displayData() {
-            const storedData = JSON.parse(localStorage.getItem("data")) || [];
-            dataList.innerHTML = "";
-    
-            storedData.forEach((item, index) => {
+
+        // Open modal functions
+        function openModal(id) {
+            document.getElementById(id).style.display = "flex";
+        }
+
+        // Close modal functions
+        function closeModal(id) {
+            document.getElementById(id).style.display = "none";
+            clearModalInputs();  // Clear inputs when modal is closed
+        }
+
+        // Clear modal inputs
+        function clearModalInputs() {
+            document.getElementById("addIsm").value = '';
+            document.getElementById("addFamiliya").value = '';
+            document.getElementById("addJshr").value = '';
+            document.getElementById("addAvto").value = '';
+            document.getElementById("addTexpasport").value = '';
+        }
+
+        // Add data function
+        function addData() {
+            const ism = document.getElementById("addIsm").value;
+            const familiya = document.getElementById("addFamiliya").value;
+            const jshr = document.getElementById("addJshr").value;
+            const avto = document.getElementById("addAvto").value;
+            const texpasport = document.getElementById("addTexpasport").value;
+
+            haydovchilar.push({ ism, familiya, jshr, avto, texpasport });
+
+            localStorage.setItem('haydovchilar', JSON.stringify(haydovchilar)); // Save data to localStorage
+            renderTable();
+            closeModal('addModal');
+        }
+
+        // Render table function
+        function renderTable() {
+            const dataList = document.getElementById("dataList");
+            dataList.innerHTML = '';
+            haydovchilar.forEach((haydovchi, index) => {
                 const row = `
                     <tr>
-                        <td>${item.ism}</td>
-                        <td>${item.familiya}</td>
-                        <td>${item.jsr}</td>
-                        <td>${item.avtomobil}</td>
-                        <td>${item.texnikPasport}</td>
+                        <td>${haydovchi.ism}</td>
+                        <td>${haydovchi.familiya}</td>
+                        <td>${haydovchi.jshr}</td>
+                        <td>${haydovchi.avto}</td>
+                        <td>${haydovchi.texpasport}</td>
                         <td>
-                            <button onclick="openModal(${index})">Tahrirlash</button>
-                            <button onclick="deleteData(${index})">O'chirish</button>
+                            <button class="btn-edit" onclick="editData(${index})"><i class="fas fa-edit"></i></button>
+                            <button class="btn-delete" onclick="deleteData(${index})"><i class="fas fa-trash-alt"></i></button>
                         </td>
-                    </tr>
-                `;
-                dataList.insertAdjacentHTML("beforeend", row);
+                    </tr>`;
+                dataList.innerHTML += row;
             });
         }
-    
-        // Ma'lumotni o'chirish
+
+        // Edit data function
+        function editData(index) {
+            const haydovchi = haydovchilar[index];
+            document.getElementById("addIsm").value = haydovchi.ism;
+            document.getElementById("addFamiliya").value = haydovchi.familiya;
+            document.getElementById("addJshr").value = haydovchi.jshr;
+            document.getElementById("addAvto").value = haydovchi.avto;
+            document.getElementById("addTexpasport").value = haydovchi.texpasport;
+            openModal("addModal");
+        }
+
+        // Delete data function
         function deleteData(index) {
-            let storedData = JSON.parse(localStorage.getItem("data"));
-            storedData.splice(index, 1);
-            localStorage.setItem("data", JSON.stringify(storedData));
-            displayData();
+            haydovchilar.splice(index, 1);
+            localStorage.setItem('haydovchilar', JSON.stringify(haydovchilar)); // Save to localStorage
+            renderTable();
         }
-    
-        // Qidiruv funksiyasi
-        function searchData() {
-            const searchTerm = document.getElementById("searchInput").value.toLowerCase();
-            const rows = document.querySelectorAll('#dataTable tbody tr');
-    
-            rows.forEach(row => {
-                const cells = row.getElementsByTagName('td');
-                const [ism, familiya, jsr, avtomobil, texnikPasport] = Array.from(cells).map(cell => cell.textContent.toLowerCase());
-    
-                if (
-                    ism.includes(searchTerm) ||
-                    familiya.includes(searchTerm) ||
-                    jsr.includes(searchTerm) ||
-                    avtomobil.includes(searchTerm) ||
-                    texnikPasport.includes(searchTerm)
-                ) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        }
-    
-        // Sayt yuklanganda ma'lumotlarni ko'rsatish
-        window.onload = displayData;
     </script>
-    
 </body>
 </html>
