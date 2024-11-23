@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haydovchi Ma'lumotlari</title>
+    <style>
+        /* Global Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f4f9;
+            color: #333;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2em;
+        }
+
+        /* Form and Input Styles */
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        input:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .edit-button, .delete-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .delete-button {
+            background-color: #f44336;
+        }
+
+        .edit-button:hover {
+            background-color: #45a049;
+        }
+
+        .delete-button:hover {
+            background-color: #d32f2f;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            form {
+                width: 90%;
+            }
+
+            table {
+                font-size: 0.9rem;
+            }
+
+            .search-container input[type="search"] {
+                width: 80%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5em;
+            }
+
+            button {
+                padding: 12px;
+            }
+
+            input {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Haydovchi Ma'lumotlarini Qo'shish</h1>
+
+    <!-- Form to add data -->
+    <form id="dataForm">
+        <input type="text" id="ism" placeholder="Haydovchi Ismi" required><br><br>
+        <input type="text" id="familiya" placeholder="Haydovchi Familiyasi" required><br><br>
+        <input type="text" id="jsr" placeholder="Haydovchi JSHR" required><br><br>
+        <input type="text" id="avtomobil" placeholder="Avtomobil Raqami" required><br><br>
+        <input type="text" id="texnikPasport" placeholder="Avtomobil Texnik Pasporti" required><br><br>
+        <button type="submit">Ma'lumotni Qo'shish</button>
+    </form>
+
+    <h2>Saqlangan Ma'lumotlar:</h2>
+    <div class="search-container">
+        <input type="search" id="searchInput" placeholder="Qidirish..." oninput="searchData()">
+    </div>
+
+    <!-- Data Table -->
+    <table id="dataTable">
+        <thead>
+            <tr>
+                <th>Ism</th>
+                <th>Familiya</th>
+                <th>JSHR</th>
+                <th>Avtomobil Raqami</th>
+                <th>Texnik Pasport Raqami</th>
+                <th>Harakatlar</th>
+            </tr>
+        </thead>
+        <tbody id="dataList">
+        </tbody>
+    </table>
+
+    <script>
+        const form = document.getElementById("dataForm");
+        const dataList = document.getElementById("dataList");
+        const searchInput = document.getElementById("searchInput");
+        const dataTable = document.getElementById("dataTable");
+
+        // Ma'lumotlarni localStorage-ga qo'shish
+        form.addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const ism = document.getElementById("ism").value;
+            const familiya = document.getElementById("familiya").value;
+            const jsr = document.getElementById("jsr").value;
+            const avtomobil = document.getElementById("avtomobil").value;
+            const texnikPasport = document.getElementById("texnikPasport").value;
+
+            const newData = {
+                ism,
+                familiya,
+                jsr,
+                avtomobil,
+                texnikPasport
+            };
+
+            let storedData = JSON.parse(localStorage.getItem("data")) || [];
+            storedData.push(newData);
+            localStorage.setItem("data", JSON.stringify(storedData));
+
+            displayData();
+            form.reset();
+        });
+
+        // Ma'lumotlarni ko'rsatish
+        function displayData() {
+            dataList.innerHTML = "";
+            const storedData = JSON.parse(localStorage.getItem("data")) || [];
+
+            storedData.forEach((data, index) => {
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td>${data.ism}</td>
+                    <td>${data.familiya}</td>
+                    <td>${data.jsr}</td>
+                    <td>${data.avtomobil}</td>
+                    <td>${data.texnikPasport}</td>
+                    <td class="action-buttons">
+                        <button class="edit-button" onclick="editData(${index})">Tahrirlash</button>
+                        <button class="delete-button" onclick="deleteData(${index})">O'chirish</button>
+                    </td>
+                `;
+                dataList.appendChild(row);
+            });
+        }
+
+        // Ma'lumotni tahrirlash
+        function editData(index) {
+            const storedData = JSON.parse(localStorage.getItem("data")) || [];
+            const data = storedData[index];
+
+            document.getElementById("ism").value = data.ism;
+            document.getElementById("familiya").value = data.familiya;
+            document.getElementById("jsr").value = data.jsr;
+            document.getElementById("avtomobil").value = data.avtomobil;
+            document.getElementById("texnikPasport").value = data.texnikPasport;
+
+            // Remove the edited data
+            storedData.splice(index, 1);
+            localStorage.setItem("data", JSON.stringify(storedData));
+
+            displayData();
+        }
+
+        // Ma'lumotni o'chirish
+        function deleteData(index) {
+            const storedData = JSON.parse(localStorage.getItem("data")) || [];
+            storedData.splice(index, 1);
+            localStorage.setItem("data", JSON.stringify(storedData));
+
+            displayData();
+        }
+
+        // Qidiruv funktsiyasi
+        function searchData() {
+            const searchValue = searchInput.value.toLowerCase();
+            const rows = dataList.querySelectorAll("tr");
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll("td");
+                const searchString = Array.from(cells)
+                    .map(cell => cell.textContent.toLowerCase())
+                    .join(" ");
+
+                row.style.display = searchString.includes(searchValue) ? "" : "none";
+            });
+        }
+
+        window.onload = displayData;
+    </script>
+</body>
+</html>
