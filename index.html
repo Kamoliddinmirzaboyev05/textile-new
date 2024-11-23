@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Haydovchi Ma'lumotlari</title>
+
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <style>
         /* Global Reset */
         * {
@@ -59,6 +63,35 @@
             background-color: #45a049;
         }
 
+        /* Search Bar Styles */
+        #searchContainer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        #searchInput {
+            width: 80%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+        }
+
+        #searchIcon {
+            padding: 10px;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+
+        #searchIcon:hover {
+            background-color: #45a049;
+        }
+
         /* Table Styles */
         table {
             width: 100%;
@@ -94,6 +127,14 @@
             table {
                 font-size: 0.9rem;
             }
+
+            #searchInput {
+                width: 70%;
+            }
+
+            #searchIcon {
+                padding: 8px;
+            }
         }
     </style>
 </head>
@@ -110,6 +151,12 @@
         <button type="submit">Ma'lumotni Qo'shish</button>
     </form>
 
+    <!-- Qidiruv Maydoni (jadval tepasida) -->
+    <div id="searchContainer">
+        <input type="text" id="searchInput" placeholder="Qidirish..." oninput="searchData()">
+        <button id="searchIcon" onclick="searchData()"><i class="fas fa-search"></i></button>
+    </div>
+    
     <h2>Saqlangan Ma'lumotlar:</h2>
 
     <!-- Data Table -->
@@ -131,6 +178,7 @@
     <script>
         const form = document.getElementById("dataForm");
         const dataList = document.getElementById("dataList");
+        const searchInput = document.getElementById("searchInput");
 
         // Ma'lumotlarni HTML elementlarida saqlash va localStorage'ga yozish
         form.addEventListener("submit", function(event) {
@@ -210,6 +258,29 @@
 
         // Sayt yuklanganda ma'lumotlarni ko'rsatish
         window.onload = displayData;
+
+        // Qidiruv funksiyasi
+        function searchData() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const rows = document.querySelectorAll('#dataTable tbody tr');
+            
+            rows.forEach(row => {
+                const cells = row.getElementsByTagName('td');
+                const [ism, familiya, jsr, avtomobil, texnikPasport] = Array.from(cells).map(cell => cell.textContent.toLowerCase());
+                
+                if (
+                    ism.includes(searchTerm) ||
+                    familiya.includes(searchTerm) ||
+                    jsr.includes(searchTerm) ||
+                    avtomobil.includes(searchTerm) ||
+                    texnikPasport.includes(searchTerm)
+                ) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
     </script>
 </body>
 </html>
