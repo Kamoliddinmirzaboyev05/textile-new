@@ -132,7 +132,7 @@
         const form = document.getElementById("dataForm");
         const dataList = document.getElementById("dataList");
 
-        // Ma'lumotlarni HTML ko'rinmas atributlari orqali saqlash
+        // Ma'lumotlarni HTML elementlarida saqlash va localStorage'ga yozish
         form.addEventListener("submit", function(event) {
             event.preventDefault();
 
@@ -142,51 +142,74 @@
             const avtomobil = document.getElementById("avtomobil").value;
             const texnikPasport = document.getElementById("texnikPasport").value;
 
-            // Yangi ma'lumotni formadagi ko'rinmas elementlarga saqlash
-            const newData = `
-                <tr>
-                    <td>${ism}</td>
-                    <td>${familiya}</td>
-                    <td>${jsr}</td>
-                    <td>${avtomobil}</td>
-                    <td>${texnikPasport}</td>
-                    <td>
-                        <button onclick="editData(this)">Tahrirlash</button>
-                        <button onclick="deleteData(this)">O'chirish</button>
-                    </td>
-                    <!-- Ko'rinmas elementda saqlash -->
-                    <input type="hidden" value="${ism},${familiya},${jsr},${avtomobil},${texnikPasport}">
-                </tr>
-            `;
+            const newData = {
+                ism,
+                familiya,
+                jsr,
+                avtomobil,
+                texnikPasport
+            };
 
-            // Data ro'yxatiga qo'shish
-            dataList.insertAdjacentHTML('beforeend', newData);
+            // localStorage'da ma'lumotlarni saqlash
+            let storedData = JSON.parse(localStorage.getItem("data")) || [];
+            storedData.push(newData);
+            localStorage.setItem("data", JSON.stringify(storedData));
+
+            // Ma'lumotlarni ko'rsatish
+            displayData();
 
             // Formani tozalash
             form.reset();
         });
 
+        // Ma'lumotlarni ekranga chiqarish
+        function displayData() {
+            const storedData = JSON.parse(localStorage.getItem("data")) || [];
+            dataList.innerHTML = "";
+            storedData.forEach((item, index) => {
+                const row = `
+                    <tr>
+                        <td>${item.ism}</td>
+                        <td>${item.familiya}</td>
+                        <td>${item.jsr}</td>
+                        <td>${item.avtomobil}</td>
+                        <td>${item.texnikPasport}</td>
+                        <td>
+                            <button onclick="editData(${index})">Tahrirlash</button>
+                            <button onclick="deleteData(${index})">O'chirish</button>
+                        </td>
+                    </tr>
+                `;
+                dataList.insertAdjacentHTML("beforeend", row);
+            });
+        }
+
         // Ma'lumotni tahrirlash
-        function editData(button) {
-            const row = button.closest("tr");
-            const hiddenInput = row.querySelector("input[type='hidden']").value.split(',');
+        function editData(index) {
+            const storedData = JSON.parse(localStorage.getItem("data"));
+            const item = storedData[index];
+            document.getElementById("ism").value = item.ism;
+            document.getElementById("familiya").value = item.familiya;
+            document.getElementById("jsr").value = item.jsr;
+            document.getElementById("avtomobil").value = item.avtomobil;
+            document.getElementById("texnikPasport").value = item.texnikPasport;
 
-            // Formani tahrir qilish
-            document.getElementById("ism").value = hiddenInput[0];
-            document.getElementById("familiya").value = hiddenInput[1];
-            document.getElementById("jsr").value = hiddenInput[2];
-            document.getElementById("avtomobil").value = hiddenInput[3];
-            document.getElementById("texnikPasport").value = hiddenInput[4];
-
-            // Rowni o'chirish
-            row.remove();
+            // O'chirishdan oldin ma'lumotni olib tashlash
+            storedData.splice(index, 1);
+            localStorage.setItem("data", JSON.stringify(storedData));
+            displayData();
         }
 
         // Ma'lumotni o'chirish
-        function deleteData(button) {
-            const row = button.closest("tr");
-            row.remove();
+        function deleteData(index) {
+            let storedData = JSON.parse(localStorage.getItem("data"));
+            storedData.splice(index, 1);
+            localStorage.setItem("data", JSON.stringify(storedData));
+            displayData();
         }
+
+        // Sayt yuklanganda ma'lumotlarni ko'rsatish
+        window.onload = displayData;
     </script>
 </body>
 </html>
