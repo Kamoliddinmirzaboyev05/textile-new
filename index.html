@@ -29,45 +29,11 @@
             margin-bottom: 20px;
         }
 
-        /* Form and Input Styles */
-        form {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-
-        button {
-            width: 100%;
-            padding: 15px;
-            background-color: #4CAF50;
-            color: white;
-            font-size: 1.2rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
         /* Search Bar Styles */
         #searchContainer {
             display: flex;
             justify-content: space-between;
-            margin-top: 20px;
+            align-items: center;
             margin-bottom: 20px;
         }
 
@@ -79,23 +45,23 @@
             font-size: 1rem;
         }
 
-        #searchIcon {
-            padding: 10px;
+        #addButton {
+            padding: 10px 20px;
             background-color: #4CAF50;
+            color: white;
             border: none;
             border-radius: 5px;
-            color: white;
+            font-size: 1rem;
             cursor: pointer;
         }
 
-        #searchIcon:hover {
+        #addButton:hover {
             background-color: #45a049;
         }
 
         /* Table Styles */
         table {
             width: 100%;
-            margin-top: 20px;
             border-collapse: collapse;
         }
 
@@ -118,45 +84,73 @@
             background-color: #f1f1f1;
         }
 
+        /* Modal Styles */
+        #modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            z-index: 1000;
+        }
+
+        #modal input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        #modal button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        #modal button:hover {
+            background-color: #45a049;
+        }
+
+        /* Modal Overlay */
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
-            form {
-                width: 90%;
-            }
-
-            table {
-                font-size: 0.9rem;
-            }
-
             #searchInput {
                 width: 70%;
-            }
-
-            #searchIcon {
-                padding: 8px;
             }
         }
     </style>
 </head>
 <body>
-    <h1>Haydovchi Ma'lumotlarini Qo'shish</h1>
+    <h1>Haydovchi Ma'lumotlari</h1>
 
-    <!-- Form to add data -->
-    <form id="dataForm">
-        <input type="text" id="ism" placeholder="Haydovchi Ismi" required><br><br>
-        <input type="text" id="familiya" placeholder="Haydovchi Familiyasi" required><br><br>
-        <input type="text" id="jsr" placeholder="Haydovchi JSHR" required><br><br>
-        <input type="text" id="avtomobil" placeholder="Avtomobil Raqami" required><br><br>
-        <input type="text" id="texnikPasport" placeholder="Avtomobil Texnik Pasporti" required><br><br>
-        <button type="submit">Ma'lumotni Qo'shish</button>
-    </form>
-
-    <!-- Qidiruv Maydoni (jadval tepasida) -->
+    <!-- Search Bar and Add Button -->
     <div id="searchContainer">
         <input type="text" id="searchInput" placeholder="Qidirish..." oninput="searchData()">
-        <button id="searchIcon" onclick="searchData()"><i class="fas fa-search"></i></button>
+        <button id="addButton" onclick="openModal()">Qo'shish</button>
     </div>
-    
+
     <h2>Saqlangan Ma'lumotlar:</h2>
 
     <!-- Data Table -->
@@ -175,45 +169,85 @@
         </tbody>
     </table>
 
+    <!-- Modal -->
+    <div id="overlay" onclick="closeModal()"></div>
+    <div id="modal">
+        <input type="text" id="ism" placeholder="Haydovchi Ismi" required>
+        <input type="text" id="familiya" placeholder="Haydovchi Familiyasi" required>
+        <input type="text" id="jsr" placeholder="Haydovchi JSHR" required>
+        <input type="text" id="avtomobil" placeholder="Avtomobil Raqami" required>
+        <input type="text" id="texnikPasport" placeholder="Avtomobil Texnik Pasporti" required>
+        <button onclick="addData()">Saqlash</button>
+    </div>
+
     <script>
-        const form = document.getElementById("dataForm");
         const dataList = document.getElementById("dataList");
-        const searchInput = document.getElementById("searchInput");
-
-        // Ma'lumotlarni HTML elementlarida saqlash va localStorage'ga yozish
-        form.addEventListener("submit", function(event) {
-            event.preventDefault();
-
+        const modal = document.getElementById("modal");
+        const overlay = document.getElementById("overlay");
+    
+        let editingIndex = null; // Tahrirlash uchun indeks saqlash
+    
+        // Modalni ochish
+        function openModal(editIndex = null) {
+            modal.style.display = "block";
+            overlay.style.display = "block";
+    
+            // Tahrirlash uchun ma'lumotni yuklash
+            if (editIndex !== null) {
+                editingIndex = editIndex;
+                const storedData = JSON.parse(localStorage.getItem("data"));
+                const item = storedData[editIndex];
+                document.getElementById("ism").value = item.ism;
+                document.getElementById("familiya").value = item.familiya;
+                document.getElementById("jsr").value = item.jsr;
+                document.getElementById("avtomobil").value = item.avtomobil;
+                document.getElementById("texnikPasport").value = item.texnikPasport;
+            }
+        }
+    
+        // Modalni yopish va inputlarni tozalash
+        function closeModal() {
+            modal.style.display = "none";
+            overlay.style.display = "none";
+    
+            // Inputlarni tozalash
+            document.getElementById("ism").value = '';
+            document.getElementById("familiya").value = '';
+            document.getElementById("jsr").value = '';
+            document.getElementById("avtomobil").value = '';
+            document.getElementById("texnikPasport").value = '';
+            editingIndex = null;
+        }
+    
+        // Yangi ma'lumot qo'shish yoki mavjudini yangilash
+        function addData() {
             const ism = document.getElementById("ism").value;
             const familiya = document.getElementById("familiya").value;
             const jsr = document.getElementById("jsr").value;
             const avtomobil = document.getElementById("avtomobil").value;
             const texnikPasport = document.getElementById("texnikPasport").value;
-
-            const newData = {
-                ism,
-                familiya,
-                jsr,
-                avtomobil,
-                texnikPasport
-            };
-
-            // localStorage'da ma'lumotlarni saqlash
+    
+            const newData = { ism, familiya, jsr, avtomobil, texnikPasport };
             let storedData = JSON.parse(localStorage.getItem("data")) || [];
-            storedData.push(newData);
+    
+            if (editingIndex !== null) {
+                // Ma'lumotni yangilash
+                storedData[editingIndex] = newData;
+            } else {
+                // Yangi ma'lumot qo'shish
+                storedData.push(newData);
+            }
+    
             localStorage.setItem("data", JSON.stringify(storedData));
-
-            // Ma'lumotlarni ko'rsatish
+            closeModal();
             displayData();
-
-            // Formani tozalash
-            form.reset();
-        });
-
+        }
+    
         // Ma'lumotlarni ekranga chiqarish
         function displayData() {
             const storedData = JSON.parse(localStorage.getItem("data")) || [];
             dataList.innerHTML = "";
+    
             storedData.forEach((item, index) => {
                 const row = `
                     <tr>
@@ -223,7 +257,7 @@
                         <td>${item.avtomobil}</td>
                         <td>${item.texnikPasport}</td>
                         <td>
-                            <button onclick="editData(${index})">Tahrirlash</button>
+                            <button onclick="openModal(${index})">Tahrirlash</button>
                             <button onclick="deleteData(${index})">O'chirish</button>
                         </td>
                     </tr>
@@ -231,23 +265,7 @@
                 dataList.insertAdjacentHTML("beforeend", row);
             });
         }
-
-        // Ma'lumotni tahrirlash
-        function editData(index) {
-            const storedData = JSON.parse(localStorage.getItem("data"));
-            const item = storedData[index];
-            document.getElementById("ism").value = item.ism;
-            document.getElementById("familiya").value = item.familiya;
-            document.getElementById("jsr").value = item.jsr;
-            document.getElementById("avtomobil").value = item.avtomobil;
-            document.getElementById("texnikPasport").value = item.texnikPasport;
-
-            // O'chirishdan oldin ma'lumotni olib tashlash
-            storedData.splice(index, 1);
-            localStorage.setItem("data", JSON.stringify(storedData));
-            displayData();
-        }
-
+    
         // Ma'lumotni o'chirish
         function deleteData(index) {
             let storedData = JSON.parse(localStorage.getItem("data"));
@@ -255,19 +273,16 @@
             localStorage.setItem("data", JSON.stringify(storedData));
             displayData();
         }
-
-        // Sayt yuklanganda ma'lumotlarni ko'rsatish
-        window.onload = displayData;
-
+    
         // Qidiruv funksiyasi
         function searchData() {
-            const searchTerm = searchInput.value.toLowerCase();
+            const searchTerm = document.getElementById("searchInput").value.toLowerCase();
             const rows = document.querySelectorAll('#dataTable tbody tr');
-            
+    
             rows.forEach(row => {
                 const cells = row.getElementsByTagName('td');
                 const [ism, familiya, jsr, avtomobil, texnikPasport] = Array.from(cells).map(cell => cell.textContent.toLowerCase());
-                
+    
                 if (
                     ism.includes(searchTerm) ||
                     familiya.includes(searchTerm) ||
@@ -281,6 +296,10 @@
                 }
             });
         }
+    
+        // Sayt yuklanganda ma'lumotlarni ko'rsatish
+        window.onload = displayData;
     </script>
+    
 </body>
 </html>
