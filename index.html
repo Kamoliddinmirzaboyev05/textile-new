@@ -4,285 +4,285 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Haydovchi Ma'lumotlari</title>
-    <!-- FontAwesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Global Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
         }
         body {
+            font-family: Arial, sans-serif;
             background-color: #f4f4f9;
-            padding: 20px;
             color: #333;
         }
-
-        /* Login Page Styles */
-        #loginPage {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        #loginPage form {
-            background: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 300px;
+        h1, h2 {
             text-align: center;
-        }
-        #loginPage h1 {
-            margin-bottom: 20px;
             color: #4CAF50;
+            margin-bottom: 20px;
         }
-        #loginPage input {
+        .login-container {
+            max-width: 400px;
+            margin: 50px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input, button {
             width: 100%;
-            padding: 10px;
-            margin: 10px 0;
+            padding: 12px;
+            margin-bottom: 15px;
             border: 1px solid #ddd;
             border-radius: 5px;
+            font-size: 1rem;
         }
-        #loginPage button {
-            width: 100%;
-            padding: 10px;
+        button {
             background-color: #4CAF50;
             color: white;
             border: none;
-            border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
         }
-        #loginPage button:hover {
+        button:hover {
             background-color: #45a049;
         }
-
-        /* Main Page Styles */
-        #mainContainer {
-            display: none;
-        }
-        #actionButtons {
-            display: flex;
-            justify-content: space-between;
-            margin: 20px 0;
-        }
-        #dataTable {
+        table {
             width: 100%;
             margin-top: 20px;
             border-collapse: collapse;
         }
-        #dataTable th, #dataTable td {
-            padding: 10px;
+        table th, table td {
+            padding: 12px;
             border: 1px solid #ddd;
             text-align: left;
         }
-        #dataTable th {
+        table th {
             background-color: #4CAF50;
             color: white;
         }
-        #dataTable tr:nth-child(even) {
+        table tr:nth-child(even) {
             background-color: #f9f9f9;
         }
-        #dataTable tr:hover {
+        table tr:hover {
             background-color: #f1f1f1;
         }
-
-        /* Modal Styles */
         .modal {
             display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 500px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+        .modal.open {
+            display: block;
+        }
+        .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
+            display: none;
+            z-index: 5;
         }
-        .modalContent {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            max-width: 500px;
-            width: 100%;
+        .modal-overlay.open {
+            display: block;
         }
-        .modalContent input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        /* Button Styles */
-        button {
-            padding: 8px 15px;
-            border-radius: 5px;
+        .action-btns button {
+            display: inline-block;
+            margin-right: 5px;
+            padding: 5px 10px;
+            border: none;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 0.9rem;
         }
-
-        .btn-add {
-            background-color: #4CAF50;
+        .edit-btn {
+            background-color: #ffc107;
             color: white;
-            border: none;
+            border-radius: 4px;
         }
-
-        .btn-add:hover {
-            background-color: #45a049;
+        .edit-btn:hover {
+            background-color: #e0a800;
         }
-
-        .btn-edit, .btn-delete {
-            background-color: #f44336;
+        .delete-btn {
+            background-color: #dc3545;
             color: white;
-            border: none;
+            border-radius: 4px;
         }
-
-        .btn-edit:hover, .btn-delete:hover {
-            background-color: #e53935;
+        .delete-btn:hover {
+            background-color: #c82333;
         }
     </style>
 </head>
 <body>
-    <!-- Login Page -->
-    <div id="loginPage">
-        <form>
-            <h1>Login</h1>
-            <input type="text" id="loginInput" placeholder="Login" required><br><br>
-            <input type="password" id="passwordInput" placeholder="Parol" required><br><br>
-            <button type="button" onclick="login()">Kirish</button>
-        </form>
+    <div id="loginPage" class="login-container">
+        <h1>Login</h1>
+        <input type="text" id="loginUsername" placeholder="Login" required>
+        <input type="password" id="loginPassword" placeholder="Parol" required>
+        <button onclick="handleLogin()">Kirish</button>
     </div>
 
-    <!-- Main Page -->
-    <div id="mainContainer">
+    <div id="mainPage" class="container" style="display: none;">
         <h1>Haydovchi Ma'lumotlari</h1>
-        <div id="actionButtons">
-            <button class="btn-add" onclick="openModal('addModal')">Yangi Ma'lumot Qo'shish</button>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+            <input type="text" id="searchInput" placeholder="Qidirish..." oninput="searchData()" style="width: 75%; padding: 10px;">
+            <button onclick="openModal()">+ Qo'shish</button>
         </div>
-        <table id="dataTable">
+        <table>
             <thead>
                 <tr>
                     <th>Ism</th>
                     <th>Familiya</th>
                     <th>JSHR</th>
-                    <th>Avtomobil</th>
-                    <th>Texpasport Raqami</th>
-                    <th>Harakatlar</th>
+                    <th>Avtomobil Raqami</th>
+                    <th>Texnik Pasport</th>
+                    <th>Amallar</th>
                 </tr>
             </thead>
             <tbody id="dataList"></tbody>
         </table>
     </div>
 
-    <!-- Add Data Modal -->
-    <div id="addModal" class="modal">
-        <div class="modalContent">
-            <h2>Yangi Ma'lumot Qo'shish</h2>
-            <input type="text" id="addIsm" placeholder="Ism" required>
-            <input type="text" id="addFamiliya" placeholder="Familiya" required>
-            <input type="text" id="addJshr" placeholder="JSHR" required>
-            <input type="text" id="addAvto" placeholder="Avtomobil Raqami" required>
-            <input type="text" id="addTexpasport" placeholder="Texpasport Raqami" required>
-            <button class="btn-add" onclick="addData()">Saqlash</button>
-            <button onclick="closeModal('addModal')">Bekor Qilish</button>
-        </div>
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="modal" id="dataModal">
+        <h2>Haydovchi Qo'shish</h2>
+        <input type="text" id="modalIsm" placeholder="Ism" required>
+        <input type="text" id="modalFamiliya" placeholder="Familiya" required>
+        <input type="text" id="modalJSR" placeholder="JSHR" required>
+        <input type="text" id="modalAvto" placeholder="Avtomobil Raqami" required>
+        <input type="text" id="modalTexPasport" placeholder="Texnik Pasport" required>
+        <button onclick="saveData()">Saqlash</button>
+        <button onclick="closeModal()">Bekor qilish</button>
     </div>
 
     <script>
-        let currentLogin = "admin";
-        let currentPassword = "1234";
-        let haydovchilar = JSON.parse(localStorage.getItem('haydovchilar')) || [];
+        const loginPage = document.getElementById("loginPage");
+        const mainPage = document.getElementById("mainPage");
+        const dataList = document.getElementById("dataList");
+        const modalOverlay = document.getElementById("modalOverlay");
+        const dataModal = document.getElementById("dataModal");
+        const storedData = JSON.parse(localStorage.getItem("data")) || [];
+        let editIndex = null;
 
-        // Login function
-        function login() {
-            const enteredLogin = document.getElementById("loginInput").value;
-            const enteredPassword = document.getElementById("passwordInput").value;
-            if (enteredLogin === currentLogin && enteredPassword === currentPassword) {
-                document.getElementById("loginPage").style.display = "none";
-                document.getElementById("mainContainer").style.display = "block";
-                renderTable();
+        function handleLogin() {
+            const username = document.getElementById("loginUsername").value;
+            const password = document.getElementById("loginPassword").value;
+            if (username === "admin" && password === "12345") {
+                loginPage.style.display = "none";
+                mainPage.style.display = "block";
+                displayData();
             } else {
-                alert("Login yoki parol noto'g'ri.");
+                alert("Login yoki parol xato!");
             }
         }
 
-        // Open modal functions
-        function openModal(id) {
-            document.getElementById(id).style.display = "flex";
+        function openModal(index = null) {
+            dataModal.classList.add("open");
+            modalOverlay.classList.add("open");
+            if (index !== null) {
+                editIndex = index;
+                const item = storedData[index];
+                document.getElementById("modalIsm").value = item.ism;
+                document.getElementById("modalFamiliya").value = item.familiya;
+                document.getElementById("modalJSR").value = item.jsr;
+                document.getElementById("modalAvto").value = item.avto;
+                document.getElementById("modalTexPasport").value = item.texPasport;
+            }
         }
 
-        // Close modal functions
-        function closeModal(id) {
-            document.getElementById(id).style.display = "none";
-            clearModalInputs();  // Clear inputs when modal is closed
+        function closeModal() {
+            dataModal.classList.remove("open");
+            modalOverlay.classList.remove("open");
+            editIndex = null;
+            document.querySelectorAll("#dataModal input").forEach(input => input.value = "");
         }
 
-        // Clear modal inputs
-        function clearModalInputs() {
-            document.getElementById("addIsm").value = '';
-            document.getElementById("addFamiliya").value = '';
-            document.getElementById("addJshr").value = '';
-            document.getElementById("addAvto").value = '';
-            document.getElementById("addTexpasport").value = '';
+        function saveData() {
+            const ism = document.getElementById("modalIsm").value;
+            const familiya = document.getElementById("modalFamiliya").value;
+            const jsr = document.getElementById("modalJSR").value;
+            const avto = document.getElementById("modalAvto").value;
+            const texPasport = document.getElementById("modalTexPasport").value;
+
+            if (editIndex !== null) {
+                storedData[editIndex] = { ism, familiya, jsr, avto, texPasport };
+            } else {
+                storedData.push({ ism, familiya, jsr, avto, texPasport });
+            }
+
+            localStorage.setItem("data", JSON.stringify(storedData));
+            displayData();
+            closeModal();
         }
 
-        // Add data function
-        function addData() {
-            const ism = document.getElementById("addIsm").value;
-            const familiya = document.getElementById("addFamiliya").value;
-            const jshr = document.getElementById("addJshr").value;
-            const avto = document.getElementById("addAvto").value;
-            const texpasport = document.getElementById("addTexpasport").value;
-
-            haydovchilar.push({ ism, familiya, jshr, avto, texpasport });
-
-            localStorage.setItem('haydovchilar', JSON.stringify(haydovchilar)); // Save data to localStorage
-            renderTable();
-            closeModal('addModal');
-        }
-
-        // Render table function
-        function renderTable() {
-            const dataList = document.getElementById("dataList");
-            dataList.innerHTML = '';
-            haydovchilar.forEach((haydovchi, index) => {
+        function displayData() {
+            dataList.innerHTML = "";
+            storedData.forEach((item, index) => {
                 const row = `
                     <tr>
-                        <td>${haydovchi.ism}</td>
-                        <td>${haydovchi.familiya}</td>
-                        <td>${haydovchi.jshr}</td>
-                        <td>${haydovchi.avto}</td>
-                        <td>${haydovchi.texpasport}</td>
-                        <td>
-                            <button class="btn-edit" onclick="editData(${index})"><i class="fas fa-edit"></i></button>
-                            <button class="btn-delete" onclick="deleteData(${index})"><i class="fas fa-trash-alt"></i></button>
+                        <td>${item.ism}</td>
+                        <td>${item.familiya}</td>
+                        <td>${item.jsr}</td>
+                        <td>${item.avto}</td>
+                        <td>${item.texPasport}</td>
+                        <td class="action-btns">
+                            <button class="edit-btn" onclick="openModal(${index})"><i class="fas fa-edit"></i></button>
+                            <button class="delete-btn" onclick="deleteData(${index})"><i class="fas fa-trash"></i></button>
                         </td>
-                    </tr>`;
-                dataList.innerHTML += row;
+                    </tr>
+                `;
+                dataList.insertAdjacentHTML("beforeend", row);
             });
         }
 
-        // Edit data function
-        function editData(index) {
-            const haydovchi = haydovchilar[index];
-            document.getElementById("addIsm").value = haydovchi.ism;
-            document.getElementById("addFamiliya").value = haydovchi.familiya;
-            document.getElementById("addJshr").value = haydovchi.jshr;
-            document.getElementById("addAvto").value = haydovchi.avto;
-            document.getElementById("addTexpasport").value = haydovchi.texpasport;
-            openModal("addModal");
+        function deleteData(index) {
+            if (confirm("Bu ma'lumotni o'chirishni xohlaysizmi?")) {
+                storedData.splice(index, 1);
+                localStorage.setItem("data", JSON.stringify(storedData));
+                displayData();
+            }
         }
 
-        // Delete data function
-        function deleteData(index) {
-            haydovchilar.splice(index, 1);
-            localStorage.setItem('haydovchilar', JSON.stringify(haydovchilar)); // Save to localStorage
-            renderTable();
+        function searchData() {
+            const query = document.getElementById("searchInput").value.toLowerCase();
+            dataList.innerHTML = "";
+            storedData.filter(item =>
+                Object.values(item).some(val => val.toLowerCase().includes(query))
+            ).forEach((item, index) => {
+                const row = `
+                    <tr>
+                        <td>${item.ism}</td>
+                        <td>${item.familiya}</td>
+                        <td>${item.jsr}</td>
+                        <td>${item.avto}</td>
+                        <td>${item.texPasport}</td>
+                        <td class="action-btns">
+                            <button class="edit-btn" onclick="openModal(${index})"><i class="fas fa-edit"></i></button>
+                            <button class="delete-btn" onclick="deleteData(${index})"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+                dataList.insertAdjacentHTML("beforeend", row);
+            });
         }
+
+        displayData();
     </script>
 </body>
 </html>
